@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 
 public class Game {
-    ArrayList players = new ArrayList();
+	public static final int QUESTION_QUANTITY = 50;
+	public static final int MIN_PLAYERS = 2;
+	ArrayList players = new ArrayList();
     int[] places = new int[6];
     int[] purses  = new int[6];
     boolean[] inPenaltyBox  = new boolean[6];
@@ -18,37 +20,49 @@ public class Game {
     boolean isGettingOutOfPenaltyBox;
     
     public  Game(){
-    	for (int i = 0; i < 50; i++) {
-			popQuestions.addLast("Pop Question " + i);
-			scienceQuestions.addLast(("Science Question " + i));
-			sportsQuestions.addLast(("Sports Question " + i));
-			rockQuestions.addLast(createRockQuestion(i));
-    	}
-    }
-
-	public String createRockQuestion(int index){
-		return "Rock Question " + index;
+		createQuestions();
 	}
-	
+
+	private void createQuestions() {
+		for (int i = 0; i < getQuestionQuantity(); i++) {
+			popQuestions.addLast(createQuestion(i, "Pop"));
+			scienceQuestions.addLast(createQuestion(i, "Science"));
+			sportsQuestions.addLast(createQuestion(i, "Sports"));
+			rockQuestions.addLast(createQuestion(i, "Rock"));
+		}
+	}
+
+	private static int getQuestionQuantity() {
+		return QUESTION_QUANTITY;
+	}
+
+	private String createQuestion(int index, String category) {
+		return category + " Question " + index;
+	}
+
 	public boolean isPlayable() {
-		return (howManyPlayers() >= 2);
+		return (players.size() >= getMinPlayers());
+	}
+
+	private static int getMinPlayers() {
+		return MIN_PLAYERS;
 	}
 
 	public boolean add(String playerName) {
-		
-		
 	    players.add(playerName);
-	    places[howManyPlayers()] = 0;
-	    purses[howManyPlayers()] = 0;
-	    inPenaltyBox[howManyPlayers()] = false;
-	    
-	    System.out.println(playerName + " was added");
-	    System.out.println("They are player number " + players.size());
+		int numberOfPlayers = players.size();
+		places[numberOfPlayers] = 0;
+	    purses[numberOfPlayers] = 0;
+	    inPenaltyBox[numberOfPlayers] = false;
+
+		print(playerName + " was added");
+		System.out.println("They are player number " + numberOfPlayers);
+
 		return true;
 	}
-	
-	public int howManyPlayers() {
-		return players.size();
+
+	private static void print(java.lang.String message) {
+		System.out.println(message);
 	}
 
 	public void roll(int roll) {
@@ -56,7 +70,7 @@ public class Game {
 		System.out.println("They have rolled a " + roll);
 		
 		if (inPenaltyBox[currentPlayer]) {
-			if (roll % 2 != 0) {
+			if (roll % MIN_PLAYERS != 0) {
 				isGettingOutOfPenaltyBox = true;
 				
 				System.out.println(players.get(currentPlayer) + " is getting out of the penalty box");
@@ -106,7 +120,7 @@ public class Game {
 		if (places[currentPlayer] == 1) return "Science";
 		if (places[currentPlayer] == 5) return "Science";
 		if (places[currentPlayer] == 9) return "Science";
-		if (places[currentPlayer] == 2) return "Sports";
+		if (places[currentPlayer] == MIN_PLAYERS) return "Sports";
 		if (places[currentPlayer] == 6) return "Sports";
 		if (places[currentPlayer] == 10) return "Sports";
 		return "Rock";
