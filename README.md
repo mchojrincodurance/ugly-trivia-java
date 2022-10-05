@@ -1,5 +1,6 @@
 https://github.com/jbrains/trivia
 https://kata-log.rocks/ugly-trivia-kata
+https://github.com/mchojrincodurance/ugly-trivia-java
 
 Siguientes pasos:
 
