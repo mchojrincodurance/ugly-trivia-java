@@ -4,11 +4,8 @@ https://github.com/mchojrincodurance/ugly-trivia-java
 
 Siguientes pasos:
 
-- Estamos con el método addPlayer:
-- División de responsabilidades usando refactors del IDE.
-- Seguir entendiendo el codigo haciendo refactors del IDE.
-
-Para más adelante.
-- Dividir en metodos para luego
-quizá empezar con los test de caracterización
+- Empezar con los test de caracterización
+- Revisar los TODO
 - Tiramos de inicio con Golden Master.
+- Dividir en metodos para luego avanzar hacia clases Board y Player
+  - ¿Vale la pena armar clases para Questions y Categories?
