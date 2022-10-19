@@ -31,6 +31,95 @@ public class Game {
         createQuestions();
     }
 
+    public boolean isPlayable() {
+        return (getNumberOfPlayers() >= getMinPlayers());
+    }
+
+    public boolean wrongAnswer() {
+        print("Question was incorrectly answered");
+        print(players.get(currentPlayer) + " was sent to the penalty box");
+        sendPlayerToPenaltyBox(currentPlayer);
+
+        nextPlayer();
+
+        return true;
+    }
+
+    public boolean add(String playerName) {
+        players.add(playerName);
+        int playerId = getLastPlayerId();
+        initPlayer(playerId);
+
+        //TODO: Revisar si podemos extraer del add el print
+        print(playerName + " was added");
+        print("They are player number " + playerId);
+
+        return true;
+    }
+    public void roll(int roll) {
+        print(players.get(currentPlayer) + " is the current player");
+        print("They have rolled a " + roll);
+
+        if (isPlayerInPenaltyBox(currentPlayer)) {
+            if (isOdd(roll)) {
+                // TODO Colapsar isGettingOutOfPenaltyBox con isOdd(roll)
+                isGettingOutOfPenaltyBox = true;
+
+                print(players.get(currentPlayer) + " is getting out of the penalty box");
+                executePlay(roll);
+            } else {
+                isGettingOutOfPenaltyBox = false;
+
+                print(players.get(currentPlayer) + " is not getting out of the penalty box");
+            }
+
+        } else {
+
+            executePlay(roll);
+        }
+
+    }
+    public boolean wasCorrectlyAnswered() {
+        if (isPlayerInPenaltyBox(currentPlayer)) {
+            if (isGettingOutOfPenaltyBox) {
+                print("Answer was correct!!!!");
+                increasePlayerGoldCoins(currentPlayer);
+                print(players.get(currentPlayer)
+                        + " now has "
+                        + getPlayerGoldCoins(currentPlayer)
+                        + " Gold Coins.");
+
+                boolean winner = didPlayerWin();
+                nextPlayer();
+
+                return winner;
+            } else {
+                nextPlayer();
+                return true;
+            }
+
+
+        } else {
+
+            // TODO fix the typo!!!!
+            print("Answer was corrent!!!!");
+            increasePlayerGoldCoins(currentPlayer);
+            print(players.get(currentPlayer)
+                    + " now has "
+                    + getPlayerGoldCoins(currentPlayer)
+                    + " Gold Coins.");
+
+            boolean winner = didPlayerWin();
+            nextPlayer();
+
+            return winner;
+        }
+    }
+
+    private int getNumberOfPlayers() {
+        return players.size();
+    }
+
     private void createQuestions() {
         for (int i = 0; i < getQuestionQuantity(); i++) {
             createOneQuestionPerCategory(i);
@@ -52,28 +141,14 @@ public class Game {
         return category + " Question " + index;
     }
 
-    public boolean isPlayable() {
-        return (getLastPlayerId() >= getMinPlayers());
-    }
 
     private static int getMinPlayers() {
         return MIN_PLAYERS;
     }
 
-    public boolean add(String playerName) {
-        players.add(playerName);
-        int playerId = getLastPlayerId();
-        initPlayer(playerId);
-
-        //TODO: Revisar si podemos extraer del add el print
-        print(playerName + " was added");
-        print("They are player number " + playerId);
-
-        return true;
-    }
 
     private int getLastPlayerId() {
-        return players.size();
+        return getNumberOfPlayers();
     }
 
     private void initPlayer(int numberOfPlayers) {
@@ -98,29 +173,6 @@ public class Game {
         System.out.println(message);
     }
 
-    public void roll(int roll) {
-        print(players.get(currentPlayer) + " is the current player");
-        print("They have rolled a " + roll);
-
-        if (isPlayerInPenaltyBox(currentPlayer)) {
-            if (isOdd(roll)) {
-                // TODO Colapsar isGettingOutOfPenaltyBox con isOdd(roll)
-                isGettingOutOfPenaltyBox = true;
-
-                print(players.get(currentPlayer) + " is getting out of the penalty box");
-                executePlay(roll);
-            } else {
-                isGettingOutOfPenaltyBox = false;
-
-                print(players.get(currentPlayer) + " is not getting out of the penalty box");
-            }
-
-        } else {
-
-            executePlay(roll);
-        }
-
-    }
 
     private void executePlay(int roll) {
         advancePlayer(currentPlayer, roll);
@@ -184,46 +236,10 @@ public class Game {
         return ROCK_CATEGORY;
     }
 
-    public boolean wasCorrectlyAnswered() {
-        if (isPlayerInPenaltyBox(currentPlayer)) {
-            if (isGettingOutOfPenaltyBox) {
-                print("Answer was correct!!!!");
-                increasePlayerGoldCoins(currentPlayer);
-                print(players.get(currentPlayer)
-                        + " now has "
-                        + getPlayerGoldCoins(currentPlayer)
-                        + " Gold Coins.");
-
-                boolean winner = didPlayerWin();
-                nextPlayer();
-
-                return winner;
-            } else {
-                nextPlayer();
-                return true;
-            }
-
-
-        } else {
-
-            // TODO fix the typo!!!!
-            print("Answer was corrent!!!!");
-            increasePlayerGoldCoins(currentPlayer);
-            print(players.get(currentPlayer)
-                    + " now has "
-                    + getPlayerGoldCoins(currentPlayer)
-                    + " Gold Coins.");
-
-            boolean winner = didPlayerWin();
-            nextPlayer();
-
-            return winner;
-        }
-    }
 
     private void nextPlayer() {
         currentPlayer++;
-        if (currentPlayer == players.size()) {
+        if (currentPlayer == getNumberOfPlayers()) {
             currentPlayer = 0;
         }
     }
@@ -234,16 +250,6 @@ public class Game {
 
     private void increasePlayerGoldCoins(int player) {
         goldCoins[player]++;
-    }
-
-    public boolean wrongAnswer() {
-        print("Question was incorrectly answered");
-        print(players.get(currentPlayer) + " was sent to the penalty box");
-        sendPlayerToPenaltyBox(currentPlayer);
-
-        nextPlayer();
-
-        return true;
     }
 
     private void sendPlayerToPenaltyBox(int player) {

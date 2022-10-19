@@ -4,7 +4,9 @@ https://github.com/mchojrincodurance/ugly-trivia-java
 
 Siguientes pasos:
 
-- Empezar con los test de caracterización
+- Completar los test de caracterización
+- Nos hemos quedado caracterizando el metodo wrongAnswer
+
 - Revisar los TODO
 - Tiramos de inicio con Golden Master.
 - Dividir en metodos para luego avanzar hacia clases Board y Player
