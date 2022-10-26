@@ -14,17 +14,19 @@ public class Game {
     public static final String ROCK_CATEGORY = "Rock";
     public static final int LAST_AVAILABLE_POSITION = 11;
     public static final int WINNER_GOLD_COINS = 6;
-    ArrayList players = new ArrayList();
-    int[] places = new int[WINNER_GOLD_COINS];
-    int[] goldCoins = new int[WINNER_GOLD_COINS];
-    boolean[] inPenaltyBox = new boolean[WINNER_GOLD_COINS];
+
+    public static final int MAX_PLAYERS = 6;
+    protected ArrayList players = new ArrayList();
+    protected int[] positions = new int[MAX_PLAYERS];
+    protected int[] goldCoins = new int[MAX_PLAYERS];
+    protected boolean[] inPenaltyBox = new boolean[MAX_PLAYERS];
 
     LinkedList popQuestions = new LinkedList();
     LinkedList scienceQuestions = new LinkedList();
     LinkedList sportsQuestions = new LinkedList();
     LinkedList rockQuestions = new LinkedList();
 
-    int currentPlayer = 0;
+    protected int currentPlayer = 0;
     boolean isGettingOutOfPenaltyBox;
 
     public Game() {
@@ -35,11 +37,14 @@ public class Game {
         return (getNumberOfPlayers() >= getMinPlayers());
     }
 
+    /**
+     * @// TODO: 26/10/22 Should output "... was sent to the penalty box" after doing it!!!
+     * @return
+     */
     public boolean wrongAnswer() {
         print("Question was incorrectly answered");
         print(players.get(currentPlayer) + " was sent to the penalty box");
         sendPlayerToPenaltyBox(currentPlayer);
-
         nextPlayer();
 
         return true;
@@ -151,10 +156,10 @@ public class Game {
         return getNumberOfPlayers();
     }
 
-    private void initPlayer(int numberOfPlayers) {
-        initPlayerPosition(numberOfPlayers);
-        initPlayerGoldCoins(numberOfPlayers);
-        initPlayerPenaltyBox(numberOfPlayers);
+    private void initPlayer(int playerId) {
+        initPlayerPosition(playerId);
+        initPlayerGoldCoins(playerId);
+        initPlayerPenaltyBox(playerId);
     }
 
     private void initPlayerPenaltyBox(int playerId) {
@@ -166,7 +171,7 @@ public class Game {
     }
 
     private void initPlayerPosition(int playerId) {
-        places[playerId] = INIT_POSITION;
+        positions[playerId] = INIT_POSITION;
     }
 
     private static void print(Object message) {
@@ -182,7 +187,7 @@ public class Game {
 
         print(players.get(currentPlayer)
                 + "'s new location is "
-                + places[currentPlayer]);
+                + positions[currentPlayer]);
         print("The category is " + playerPositionCategory(currentPlayer));
         askQuestion();
     }
@@ -198,15 +203,15 @@ public class Game {
     private void movePlayerBackToTheBoard(int player) {
         // TODO reemplazar por LAST_AVAILABLE_POSITION + 1
         int positions = 12;
-        places[player] = places[player] - positions;
+        this.positions[player] = this.positions[player] - positions;
     }
 
     private void advancePlayer(int player, int positions) {
-        places[player] = places[player] + positions;
+        this.positions[player] = this.positions[player] + positions;
     }
 
     private boolean isPlayerOutOfBoard() {
-        return places[currentPlayer] > LAST_AVAILABLE_POSITION;
+        return positions[currentPlayer] > LAST_AVAILABLE_POSITION;
     }
 
     private void askQuestion() {
@@ -224,15 +229,15 @@ public class Game {
 
     private String playerPositionCategory(int player) {
         //TODO: divisible por 4 = POP, si sobra 1 al dividir por 4 = SCIENCE y si sobran 2 es SPORTS. E.o.c ROCK. Cambiar algortimo
-        if (places[player] == 0) return POP_CATEGORY;
-        if (places[player] == 4) return POP_CATEGORY;
-        if (places[player] == 8) return POP_CATEGORY;
-        if (places[player] == 1) return SCIENCE_CATEGORY;
-        if (places[player] == 5) return SCIENCE_CATEGORY;
-        if (places[player] == 9) return SCIENCE_CATEGORY;
-        if (places[player] == 2) return SPORTS_CATEGORY;
-        if (places[player] == 6) return SPORTS_CATEGORY;
-        if (places[player] == 10) return SPORTS_CATEGORY;
+        if (positions[player] == 0) return POP_CATEGORY;
+        if (positions[player] == 4) return POP_CATEGORY;
+        if (positions[player] == 8) return POP_CATEGORY;
+        if (positions[player] == 1) return SCIENCE_CATEGORY;
+        if (positions[player] == 5) return SCIENCE_CATEGORY;
+        if (positions[player] == 9) return SCIENCE_CATEGORY;
+        if (positions[player] == 2) return SPORTS_CATEGORY;
+        if (positions[player] == 6) return SPORTS_CATEGORY;
+        if (positions[player] == 10) return SPORTS_CATEGORY;
         return ROCK_CATEGORY;
     }
 

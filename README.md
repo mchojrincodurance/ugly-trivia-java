@@ -5,9 +5,13 @@ https://github.com/mchojrincodurance/ugly-trivia-java
 Siguientes pasos:
 
 - Completar los test de caracterización
-- Nos hemos quedado caracterizando el metodo wrongAnswer
+  - isPlayable
+  - wasCorrectlyAnswered
+  - roll
 
 - Revisar los TODO
-- Tiramos de inicio con Golden Master.
 - Dividir en metodos para luego avanzar hacia clases Board y Player
   - ¿Vale la pena armar clases para Questions y Categories?
+- Ver si hay que armar una clase del main
+
+- ¿Vale la pena armar un acceptance test tirando directo contra el main??
