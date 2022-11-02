@@ -101,19 +101,28 @@ public class GameShould {
     }
 
     @ParameterizedTest
+    @ValueSource(ints = {1,2,3,4})
+    public void start_always_with_the_first_player(int playersQuantity) {
+        TestableGame game = new TestableGame();
+        addPlayers(playersQuantity, game);
+
+        assertEquals("Player 0", game.getCurrentPlayer());
+    }
+
+    @ParameterizedTest
     @ValueSource(strings = {"Daniel", "Mauro"})
-    public void return_true_when_there_is_at_least_a_player(String playerName) {
+    public void return_true_when_there_is_at_least_a_player_and_the_answer_was_wrong(String playerName) {
         Game game = new Game();
         game.add(playerName);
 
-        assertEquals(true, game.wrongAnswer());
+        assertEquals(true, game.playerAnsweredIncorrectly());
     }
 
     @Test
     public void fail_when_there_is_called_wrongAnswer_without_players() {
         Game game = new Game();
         assertThrows(IndexOutOfBoundsException.class, () -> {
-            game.wrongAnswer();
+            game.playerAnsweredIncorrectly();
         });
     }
 
@@ -122,9 +131,9 @@ public class GameShould {
     public void print_incorrect_answer_when_the_answer_is_wrong(String playerName) {
         Game game = new Game();
         game.add(playerName);
-        this.outContent.reset();
+        clearOutput();
 
-        game.wrongAnswer();
+        game.playerAnsweredIncorrectly();
 
         String screen = getFormattedOutput();
         assertTrue(screen.contains("Question was incorrectly answered\n"));
@@ -135,9 +144,9 @@ public class GameShould {
     public void print_a_message_sending_the_player_to_penalty_box_when_the_answer_is_wrong(String playerName) {
         Game game = new Game();
         game.add(playerName);
-        this.outContent.reset();
+        clearOutput();
 
-        game.wrongAnswer();
+        game.playerAnsweredIncorrectly();
 
         String screen = getFormattedOutput();
         assertTrue(screen.contains( playerName + " was sent to the penalty box\n"));
@@ -149,7 +158,7 @@ public class GameShould {
         TestableGame game = new TestableGame();
         game.add(playerName);
         game.add(AUXILIARY_PLAYER);
-        game.wrongAnswer();
+        game.playerAnsweredIncorrectly();
 
         assertTrue(game.isInPenaltyBox(playerName));
         assertFalse(game.isInPenaltyBox(AUXILIARY_PLAYER));
@@ -161,13 +170,13 @@ public class GameShould {
         TestableGame game = new TestableGame();
         game.add(playerName);
         game.add(AUXILIARY_PLAYER);
-        game.wrongAnswer();
-        game.wrongAnswer();
+        game.playerAnsweredIncorrectly();
+        game.playerAnsweredIncorrectly();
         assertEquals(playerName, game.getCurrentPlayer());
     }
 
     @Test
-    public void place_the_player_at_the_begining_when_adding() {
+    public void place_the_player_at_the_beginning_when_adding() {
         TestableGame game = new TestableGame();
         String player = "Daniel";
         game.add(player);
@@ -207,7 +216,93 @@ public class GameShould {
         });
     }
 
+    @Test
+    public void not_allow_correct_answers_when_game_is_not_started() {
+        Game game = new Game();
+
+        assertThrows(IndexOutOfBoundsException.class, ()-> {
+            boolean winner = game.playerAnsweredCorrectly();
+        });
+    }
+
+    @Test
+    public void declare_winner_when_the_player_answered_correctly_and_was_not_in_penalty_box() {
+        Game game = new Game();
+        game.add("Daniel");
+        game.add("Mauro");
+
+        boolean winner = game.playerAnsweredCorrectly();
+
+        assertEquals(true, winner);
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "2,0",
+            "3,1",
+            "5,4",
+    })
+    public void print_the_player_name_when_answered_correctly_and_not_in_penalty_box(int playersQuantity, int winner) {
+        Game game = new Game();
+        addPlayers(playersQuantity, game);
+
+        allPreviousPlayersAnswerIncorrectly(winner, game);
+
+        clearOutput();
+        game.playerAnsweredCorrectly();
+
+        assertEquals(
+                "Answer was corrent!!!!\n" +
+                "Player " + winner + " now has 1 Gold Coins.\n", getFormattedOutput());
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "2,0,2",
+            "2,1,3",
+            "5,4,4",
+    })
+    public void should_give_one_gold_coin_for_every_correct_answer_when_out_of_penalty_box(int playersQuantity, int winner, int correctAnswers) {
+        TestableGame game = new TestableGame();
+
+        addPlayers(playersQuantity, game);
+
+        String winnerName = "Player " + winner;
+
+        int initialCoins = game.getPlayerGoldCoins(winnerName);
+
+        for (int j = 0; j < correctAnswers; j++) {
+            allPreviousPlayersAnswerIncorrectly(winner, game);
+            game.playerAnsweredCorrectly();
+            allFollowingsPlayersAnswerIncorrectly(winner, game, playersQuantity);
+        }
+
+        assertEquals(initialCoins + correctAnswers, game.getPlayerGoldCoins(winnerName));
+    }
+
+    private static void allPreviousPlayersAnswerIncorrectly(int winner, Game game) {
+        for (int i = 0; i < winner; i++) {
+            game.playerAnsweredIncorrectly();
+        }
+    }
+
+    private static void allFollowingsPlayersAnswerIncorrectly(int winner, Game game, int totalPlayerQuantity) {
+        for (int i = winner + 1; i < totalPlayerQuantity; i++) {
+            game.playerAnsweredIncorrectly();
+        }
+    }
+
+    private static void addPlayers(int playersQuantity, Game game) {
+        for (int i = 0; i < playersQuantity; i++) {
+            game.add("Player " + i);
+        }
+    }
+
     private String getFormattedOutput() {
         return outContent.toString().replace("\r", "");
+    }
+
+    private void clearOutput() {
+        this.outContent.reset();
     }
 }

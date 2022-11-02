@@ -41,7 +41,7 @@ public class Game {
      * @// TODO: 26/10/22 Should output "... was sent to the penalty box" after doing it!!!
      * @return
      */
-    public boolean wrongAnswer() {
+    public boolean playerAnsweredIncorrectly() {
         print("Question was incorrectly answered");
         print(players.get(currentPlayer) + " was sent to the penalty box");
         sendPlayerToPenaltyBox(currentPlayer);
@@ -84,7 +84,10 @@ public class Game {
         }
 
     }
-    public boolean wasCorrectlyAnswered() {
+
+    // TODO: The method has a strange answer when we start with 2 players: returns true (review)
+    // TODO Throw exception if game is not started
+    public boolean playerAnsweredCorrectly() {
         if (isPlayerInPenaltyBox(currentPlayer)) {
             if (isGettingOutOfPenaltyBox) {
                 print("Answer was correct!!!!");

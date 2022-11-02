@@ -5,9 +5,10 @@ https://github.com/mchojrincodurance/ugly-trivia-java
 Siguientes pasos:
 
 - Completar los test de caracterización
-  - wasCorrectlyAnswered
+  - playerAnsweredCorrectly
+    - Validar los casos de que el jugador está en el penalty box
   - roll
-
+- Revisar la cobertura
 - Revisar los TODO
 - Dividir en metodos para luego avanzar hacia clases Board y Player
   - ¿Vale la pena armar clases para Questions y Categories?

@@ -23,9 +23,9 @@ public class GameRunner {
 			aGame.roll(rand.nextInt(5) + 1);
 			
 			if (rand.nextInt(9) == 7) {
-				notAWinner = aGame.wrongAnswer();
+				notAWinner = aGame.playerAnsweredIncorrectly();
 			} else {
-				notAWinner = aGame.wasCorrectlyAnswered();
+				notAWinner = aGame.playerAnsweredCorrectly();
 			}
 			
 			
