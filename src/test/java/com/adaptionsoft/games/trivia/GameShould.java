@@ -6,6 +6,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.io.ByteArrayOutputStream;
@@ -58,13 +59,6 @@ public class GameShould {
         System.setErr(originalErr);
     }
 
-    @Test
-    public void not_allow_start_with_0_players() {
-        Game game = new Game();
-
-        assertEquals(false, game.isPlayable());
-    }
-
     @ParameterizedTest
     @ValueSource(strings = {"Daniel", "Mauro"})
     public void print_player_name_and_number_of_players_when_add_one(String playerName) {
@@ -90,13 +84,20 @@ public class GameShould {
                 "They are player number 2\n", getFormattedOutput());
     }
 
-    @Test
-    public void allow_start_with_more_than_2_players() {
+    @ParameterizedTest
+    @CsvSource({"0,false",
+                "1,false",
+                "2,true",
+                "3, true"
+        }
+    )
+    public void only_allow_start_with_at_least_2_players(int playersQuantity, boolean expectedResult) {
         Game game = new Game();
-        game.add("Mauro");
-        game.add("Daniel");
+        for (int i = 0; i < playersQuantity; i++) {
+            game.add("Player" + i);
+        }
 
-        assertEquals(true, game.isPlayable());
+        assertEquals(expectedResult, game.isPlayable());
     }
 
     @ParameterizedTest
@@ -109,9 +110,9 @@ public class GameShould {
     }
 
     @Test
-    public void fail_when_there_is_called_wrongAnser_without_players() {
+    public void fail_when_there_is_called_wrongAnswer_without_players() {
         Game game = new Game();
-        assertThrows(IndexOutOfBoundsException.class, ()-> {
+        assertThrows(IndexOutOfBoundsException.class, () -> {
             game.wrongAnswer();
         });
     }

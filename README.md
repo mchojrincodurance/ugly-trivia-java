@@ -5,7 +5,6 @@ https://github.com/mchojrincodurance/ugly-trivia-java
 Siguientes pasos:
 
 - Completar los test de caracterización
-  - isPlayable
   - wasCorrectlyAnswered
   - roll
 
