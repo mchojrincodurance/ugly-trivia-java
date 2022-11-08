@@ -40,6 +40,14 @@ public class GameShould {
         public int getPlayerGoldCoins(String player) {
             return goldCoins[getPlayerId(player)];
         }
+
+        public void enablePlayerToGetOutOfPenaltyBox() {
+            this.playerIsReadyToGetOutOfPenaltyBox(true);
+        }
+
+        public void preventPlayerFromGettingOutOfPenaltyBox() {
+            this.playerIsReadyToGetOutOfPenaltyBox(false);
+        }
     }
 
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
@@ -278,6 +286,75 @@ public class GameShould {
         }
 
         assertEquals(initialCoins + correctAnswers, game.getPlayerGoldCoins(winnerName));
+    }
+
+    @Test
+    public void should_give_turn_to_next_player_when_player_answer_correctly_and_player_is_in_penalty_box_and_player_is_not_getting_out() {
+        TestableGame game = new TestableGame();
+        game.add("Daniel");
+        game.add("Mauro");
+        game.playerAnsweredIncorrectly();
+        game.preventPlayerFromGettingOutOfPenaltyBox();
+        game.playerAnsweredCorrectly();
+
+        boolean result = game.playerAnsweredCorrectly();
+
+        assertEquals("Mauro",game.getCurrentPlayer());
+    }
+
+    @Test
+    public void should_return_true_when_player_answer_correctly_and_player_is_in_penalty_box_and_player_is_not_getting_out() {
+        TestableGame game = new TestableGame();
+        game.add("Daniel");
+        game.add("Mauro");
+        game.playerAnsweredIncorrectly();
+        game.preventPlayerFromGettingOutOfPenaltyBox();
+        game.playerAnsweredCorrectly();
+
+        boolean result = game.playerAnsweredCorrectly();
+
+        assertTrue(result);
+    }
+
+    @Test
+    public void should_give_one_gold_coin_when_player_answer_correctly_and_player_is_in_penalty_box_and_player_is_getting_out() {
+        TestableGame game = new TestableGame();
+        String daniel = "Daniel";
+        game.add(daniel);
+        game.add("Mauro");
+
+        // Daniel answers incorrectly
+        game.playerAnsweredIncorrectly();
+        game.enablePlayerToGetOutOfPenaltyBox();
+        int danielOriginalCoins = game.getPlayerGoldCoins(daniel);
+        // Mauro answers correctly
+        game.playerAnsweredCorrectly();
+        // Daniel answers correctly
+        game.playerAnsweredCorrectly();
+
+        assertEquals(danielOriginalCoins + 1, game.getPlayerGoldCoins(daniel));
+    }
+
+    @Test
+    public void should_print_the_player_name_when_player_answer_correctly_and_player_is_in_penalty_box_and_player_is_getting_out() {
+        TestableGame game = new TestableGame();
+        String daniel = "Daniel";
+        game.add(daniel);
+        game.add("Mauro");
+
+        // Daniel answers incorrectly
+        game.playerAnsweredIncorrectly();
+        game.enablePlayerToGetOutOfPenaltyBox();
+        // Mauro answers correctly
+        game.playerAnsweredCorrectly();
+        // Daniel answers correctly
+        clearOutput();
+        game.playerAnsweredCorrectly();
+
+
+        assertEquals(
+                "Answer was correct!!!!\n" +
+                        daniel + " now has " + game.getPlayerGoldCoins(daniel) + " Gold Coins.\n", getFormattedOutput());
     }
 
     private static void allPreviousPlayersAnswerIncorrectly(int winner, Game game) {

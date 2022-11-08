@@ -68,12 +68,12 @@ public class Game {
         if (isPlayerInPenaltyBox(currentPlayer)) {
             if (isOdd(roll)) {
                 // TODO Colapsar isGettingOutOfPenaltyBox con isOdd(roll)
-                isGettingOutOfPenaltyBox = true;
+                playerIsReadyToGetOutOfPenaltyBox(true);
 
                 print(players.get(currentPlayer) + " is getting out of the penalty box");
                 executePlay(roll);
             } else {
-                isGettingOutOfPenaltyBox = false;
+                playerIsReadyToGetOutOfPenaltyBox(false);
 
                 print(players.get(currentPlayer) + " is not getting out of the penalty box");
             }
@@ -85,6 +85,10 @@ public class Game {
 
     }
 
+    protected void playerIsReadyToGetOutOfPenaltyBox(boolean value) {
+        isGettingOutOfPenaltyBox = value;
+    }
+
     // TODO: The method has a strange answer when we start with 2 players: returns true (review)
     // TODO Throw exception if game is not started
     public boolean playerAnsweredCorrectly() {
@@ -92,15 +96,12 @@ public class Game {
             if (isGettingOutOfPenaltyBox) {
                 print("Answer was correct!!!!");
                 increasePlayerGoldCoins(currentPlayer);
-                print(players.get(currentPlayer)
-                        + " now has "
-                        + getPlayerGoldCoins(currentPlayer)
-                        + " Gold Coins.");
+                printCurrentPlayerGoldCoins();
 
-                boolean winner = didPlayerWin();
+                boolean shouldTheGameContinue = didPlayerWin();
                 nextPlayer();
 
-                return winner;
+                return shouldTheGameContinue;
             } else {
                 nextPlayer();
                 return true;
@@ -112,16 +113,20 @@ public class Game {
             // TODO fix the typo!!!!
             print("Answer was corrent!!!!");
             increasePlayerGoldCoins(currentPlayer);
-            print(players.get(currentPlayer)
-                    + " now has "
-                    + getPlayerGoldCoins(currentPlayer)
-                    + " Gold Coins.");
+            printCurrentPlayerGoldCoins();
 
-            boolean winner = didPlayerWin();
+            boolean shouldTheGameContinue = didPlayerWin();
             nextPlayer();
 
-            return winner;
+            return shouldTheGameContinue;
         }
+    }
+
+    private void printCurrentPlayerGoldCoins() {
+        print(players.get(currentPlayer)
+                + " now has "
+                + getPlayerGoldCoins(currentPlayer)
+                + " Gold Coins.");
     }
 
     private int getNumberOfPlayers() {
@@ -265,6 +270,7 @@ public class Game {
     }
 
 
+    // TODO take the ! out of the method and into the callers
     private boolean didPlayerWin() {
         return !(getPlayerGoldCoins(currentPlayer) == WINNER_GOLD_COINS);
     }

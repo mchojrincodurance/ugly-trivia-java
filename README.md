@@ -7,8 +7,9 @@ Siguientes pasos:
 - Completar los test de caracterización
   - playerAnsweredCorrectly
     - Validar los casos de que el jugador está en el penalty box
+    - Validar qué pasa con didPlayerWin (Ver casos en que gana y casos en que no)
   - roll
-- Revisar la cobertura
+    - Probar cuando es impar y puede salir del penalty box
 - Revisar los TODO
 - Dividir en metodos para luego avanzar hacia clases Board y Player
   - ¿Vale la pena armar clases para Questions y Categories?
